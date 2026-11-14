@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: commit-and-pr-for-a-fix
+expected_outcome: |
+  The commit subject is an imperative line under 72 characters that names the change (an unreadable secrets directory is skipped), not the bug's title. The body says what broke (one unreadable directory failed the whole listing) and what the fix does, and ends with a reference to #77. The pull request description says what changes and why, how it was tested, and closes #77, without headings over one-line sections, emoji or a file-by-file list. The comment in the diff is cut to a line or two stating the rule, with no "IMPORTANT", no issue number and no story of the bug.

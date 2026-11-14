@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: cutting-a-test-file
+expected_outcome: |
+  Parametrises the two look-alike refusal tests into one test with an id per case and the exact error text kept. Deletes the exact duplicate and names the test that keeps its behaviour. Does not fold the three workspace-header checks into one test with chained asserts, since they are separate behaviours and the first failure would hide the others. Fixes the flaky test at its cause, awaiting the result or an event instead of sleeping, and refuses a longer sleep, a rerun plugin or a looser assert. Keeps coverage at or above the baseline.

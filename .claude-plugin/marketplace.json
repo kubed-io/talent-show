@@ -42,6 +42,19 @@
         "mcp",
         "prompts"
       ]
+    },
+    {
+      "name": "tidy",
+      "source": "./plugins/tidy",
+      "description": "Cleanup skills for code an agent wrote. natural-writing: comments, docstrings, commit messages, pull requests, READMEs and specs that read like a careful engineer wrote them, and a pass that trims the rest. python-refactor: restructuring Python without changing what it does.",
+      "category": "development",
+      "keywords": [
+        "writing",
+        "comments",
+        "docstrings",
+        "refactoring",
+        "python"
+      ]
     }
   ]
 }

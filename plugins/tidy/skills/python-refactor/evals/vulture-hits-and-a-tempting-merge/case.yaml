@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: vulture-hits-and-a-tempting-merge
+expected_outcome: |
+  Removes only `_legacy_slug`, after grepping it, and says the other vulture hits are registrations or framework hooks to be grepped, not deleted: the decorated tool `resize`, the `on_call_tool` override and the `model_config` attribute. Does not merge the two error branches into one message, because the two texts differ and error text is behaviour; it stops and notes the difference instead. Keeps the dead-code removal and any de-duplication in separate commits, with the unit suite run after each.

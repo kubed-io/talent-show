@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: trim-comments-keeps-the-traps
+expected_outcome: |
+  The excerpt comes back with its code unchanged and its 49 comment and docstring lines cut by at least a third. The story of the fix in `_shown` and the broken promise in `names` are gone, as are the `§F1.27` and `open question #12` citations, the bold and the em dashes. The traps survive: a `UnicodeDecodeError` message quotes the bad byte, `..data` entries in a Kubernetes mount are symlinks, `urlsplit` has no `params`, and the resolved path must equal the path asked for.
