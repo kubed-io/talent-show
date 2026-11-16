@@ -97,6 +97,9 @@ def compare(path, before, after):
             tree = ast.parse(text, path, type_comments=True)
         except SyntaxError as e:
             return f"{side}: does not parse: {e.msg} (line {e.lineno})", []
+        # a `# type: ignore` is compared as text by directives(); its line moves with any
+        # docstring above it, so the AST keeps only its tag
+        tree.type_ignores = [ast.TypeIgnore(lineno=0, tag=t.tag) for t in tree.type_ignores]
         trees.append((tree, strip_docstrings(tree)))
     (old, old_docs), (new, new_docs) = trees
     if ast.dump(old) != ast.dump(new):
