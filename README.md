@@ -1,13 +1,14 @@
-# skills
+# talent-show
 
-**Agent skills for the tools we actually use, packaged as a Claude Code plugin marketplace.** Each
-plugin is one tool's worth of know-how: the traps, the cheap way to do things, and where the docs live.
+**Claude Code plugins for the tools we actually use, in one marketplace.** Most plugins are one
+tool's worth of know-how: the traps, the cheap way to do things, and where the docs live. A few are
+hooks and agents for our own sessions.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ```
-/plugin marketplace add kubed-io/skills
-/plugin install drawio@kubed
+/plugin marketplace add kubed-io/talent-show
+/plugin install drawio@talent-show
 ```
 
 Or skip installing: anything that reads skills over MCP, or straight from a git repo, can load the
@@ -62,6 +63,26 @@ of its own: a label, a push, a review, red checks.
   the family when one closes.
 
 [`plugins/ultrapowers`](plugins/ultrapowers/commands)
+
+---
+
+## 🪝 Hooks and agents
+
+Plugins that run code in a session, not skills. Every address they need comes from an env var or a
+plugin option, so nothing here names a host.
+
+| Plugin | What it adds | Needs |
+|---|---|---|
+| [`kubed-control`](plugins/kubed-control) | Each session's title, and the plan's real 5-hour and weekly usage, as OpenTelemetry metrics | `KUBED_OTLP_METRICS_ENDPOINT` |
+| [`kubed-runner`](plugins/kubed-runner) | A runner's entry agents (`spec`, `plan`, `code`, `review`, `debug`, `info`), the MCP servers they may use, and a hook that approves every call their `tools` list allows. Off until a run turns it on | `KUBED_MCP_URL`, `KUBED_MCP_CLIENT`, `MCP_OIDC_ENDPOINT` |
+| [`kb-agents`](plugins/kb-agents) | A mod: kb's agents as subagents, picked by library, category and tag | the `url` option |
+
+```bash
+claude -p --settings '{"agent":"kubed-runner:code","enabledPlugins":{"kubed-runner@talent-show":true}}'
+```
+
+To work on one, start a session with `claude --plugin-dir plugins/<plugin>`: that copy wins over the
+installed one, and `/reload-plugins` picks up edits.
 
 ---
 

@@ -1,0 +1,45 @@
+{
+  "mcpServers": {
+    "superpowers": {
+      "type": "http",
+      "url": "${KUBED_MCP_URL}/kb/mcp?library=superpowers",
+      "headersHelper": "${CLAUDE_PLUGIN_ROOT}/bin/mcp-headers"
+    },
+    "svelte": {
+      "type": "http",
+      "url": "${KUBED_MCP_URL}/kb/mcp?library=svelte",
+      "headersHelper": "${CLAUDE_PLUGIN_ROOT}/bin/mcp-headers"
+    },
+    "jina": {
+      "type": "http",
+      "url": "${KUBED_MCP_URL}/jina/mcp",
+      "headersHelper": "${CLAUDE_PLUGIN_ROOT}/bin/mcp-headers"
+    },
+    "selenium-flow": {
+      "type": "http",
+      "url": "${KUBED_MCP_URL}/selenium-flow/mcp",
+      "headers": {
+        "Sf-Workspace": "${CLAUDE_WORKSPACE}"
+      },
+      "headersHelper": "${CLAUDE_PLUGIN_ROOT}/bin/mcp-headers selenium"
+    },
+    "project-docs": {
+      "type": "http",
+      "url": "${KUBED_MCP_URL}/project-docs/mcp",
+      "headers": {
+        "X-Folder": "${CLAUDE_WORKSPACE}"
+      },
+      "headersHelper": "${CLAUDE_PLUGIN_ROOT}/bin/mcp-headers project-docs"
+    },
+    "kubernetes": {
+      "type": "http",
+      "url": "${KUBED_MCP_URL}/kubernetes/mcp",
+      "headersHelper": "${CLAUDE_PLUGIN_ROOT}/bin/mcp-headers kubernetes"
+    },
+    "grafana": {
+      "type": "http",
+      "url": "${KUBED_MCP_URL}/grafana/mcp",
+      "headersHelper": "${CLAUDE_PLUGIN_ROOT}/bin/mcp-headers grafana"
+    }
+  }
+}

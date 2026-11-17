@@ -7,8 +7,8 @@
     "name": "kubed-io",
     "url": "https://github.com/kubed-io"
   },
-  "homepage": "https://github.com/kubed-io/skills/tree/main/plugins/drawio",
-  "repository": "https://github.com/kubed-io/skills",
+  "homepage": "https://github.com/kubed-io/talent-show/tree/main/plugins/drawio",
+  "repository": "https://github.com/kubed-io/talent-show",
   "license": "MIT",
   "keywords": [
     "drawio",

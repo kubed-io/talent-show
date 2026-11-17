@@ -1,10 +1,10 @@
 {
-  "name": "kubed",
+  "name": "talent-show",
   "owner": {
     "name": "kubed-io",
     "url": "https://github.com/kubed-io"
   },
-  "description": "Agent skills from kubed-io, one plugin per tool.",
+  "description": "Claude Code plugins from kubed-io: skills, one plugin per tool, and the hooks and agents our own sessions run.",
   "plugins": [
     {
       "name": "drawio",
@@ -54,6 +54,41 @@
         "docstrings",
         "refactoring",
         "python"
+      ]
+    },
+    {
+      "name": "kubed-control",
+      "source": "./plugins/kubed-control",
+      "description": "Hooks for every session: its title, and the plan's real 5-hour and weekly usage, as OpenTelemetry metrics to $KUBED_OTLP_METRICS_ENDPOINT.",
+      "category": "hooks",
+      "keywords": [
+        "hooks",
+        "telemetry",
+        "opentelemetry"
+      ]
+    },
+    {
+      "name": "kubed-runner",
+      "source": "./plugins/kubed-runner",
+      "defaultEnabled": false,
+      "description": "A CI runner's entry agents (spec, plan, code, review, debug, info) and the MCP servers they may use, signed in by client credentials. Off until a run turns it on.",
+      "category": "hooks",
+      "keywords": [
+        "agents",
+        "runner",
+        "mcp"
+      ]
+    },
+    {
+      "name": "kb-agents",
+      "source": "./plugins/kb-agents",
+      "defaultEnabled": false,
+      "description": "A mod that loads the subagents kb serves when a session starts, narrowed by library, category and tag.",
+      "category": "hooks",
+      "keywords": [
+        "agents",
+        "kb",
+        "mod"
       ]
     }
   ]

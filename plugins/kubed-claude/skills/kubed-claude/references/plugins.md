@@ -103,7 +103,7 @@ directory loads in place, so it needs no version bump.
 | Plugin, `git-subdir` (`url`, `path`) | One folder, by sparse partial clone |
 | Plugin, `npm`, `archive` (https zip, `sha256`), `command` | The package, the zip, or the printed folder |
 
-**`--sparse`, tested** 2.1.316 (`marketplace add kubed-io/skills --sparse
+**`--sparse`, tested** 2.1.316 (`marketplace add kubed-io/talent-show --sparse
 .claude-plugin plugins/drawio`, in a scratch `CLAUDE_CONFIG_DIR`):
 
 - It's a shallow, `blob:none` partial clone with a cone-mode sparse checkout.

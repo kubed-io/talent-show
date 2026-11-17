@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# headersHelper for kubed-runner's MCP servers: `mcp-headers [scope...]` prints an
+# Authorization header with a client-credentials token. The client is $KUBED_MCP_CLIENT
+# (a setting's `env` reaches this script; plugin options don't), its secret mounted at
+# /var/run/secrets/keycloak/<client>/client_secret; $MCP_OIDC_ENDPOINT is the token endpoint.
+# The scopes are the server's optional ones, so each token carries only the roles its
+# server checks.
+set -euo pipefail
+
+client="${KUBED_MCP_CLIENT:?KUBED_MCP_CLIENT names the client}"
+secret="$(cat "/var/run/secrets/keycloak/${client}/client_secret")"
+# Claude Code runs a plugin's headersHelper without any variable whose name looks like a
+# credential (TOKEN, SECRET, KEY, AUTH), hence MCP_OIDC_ENDPOINT, not a *_TOKEN_URL.
+endpoint="${MCP_OIDC_ENDPOINT:?MCP_OIDC_ENDPOINT is the token endpoint}"
+
+token="$(curl -fsS "${endpoint}" \
+  -d grant_type=client_credentials \
+  -d client_id="${client}" \
+  --data-urlencode client_secret="${secret}" \
+  --data-urlencode scope="mcp $*" \
+  | jq -r .access_token)"
+
+printf '{"Authorization": "Bearer %s"}\n' "${token}"

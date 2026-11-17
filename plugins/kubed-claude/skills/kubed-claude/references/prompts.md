@@ -74,7 +74,7 @@ kubed-io/mcp-kb serves the same file whether it is a Claude command, a Copilot
 |---|---|
 | A person starts it, with a few blanks to fill | Prompt (command) |
 | The model should find it when the task calls for it | Skill |
-| A headless agent's turn ("the plan was approved, carry on") | A prompt the workflow fetches and sends as the turn. kubed-io/skills' `ultrapowers` is this |
+| A headless agent's turn ("the plan was approved, carry on") | A prompt the workflow fetches and sends as the turn. kubed-io/talent-show' `ultrapowers` is this |
 
 ## Headless
 

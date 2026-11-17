@@ -1,0 +1,76 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "kb-agents",
+  "displayName": "kb-agents",
+  "description": "Loads the subagents kb serves (agents/list, agents/get) when a session starts, narrowed by library, category and tag.",
+  "author": {
+    "name": "kubed-io",
+    "url": "https://github.com/kubed-io"
+  },
+  "repository": "https://github.com/kubed-io/talent-show",
+  "keywords": [
+    "agents",
+    "kb",
+    "mod"
+  ],
+  "defaultEnabled": false,
+  "userConfig": {
+    "url": {
+      "type": "string",
+      "title": "kb URL for agents",
+      "description": "kb's MCP URL, reached directly: agentgateway refuses the agents methods. Empty: no agents load.",
+      "default": ""
+    },
+    "library": {
+      "type": "string",
+      "title": "Library",
+      "description": "One library, or empty for all.",
+      "default": ""
+    },
+    "categories": {
+      "type": "string",
+      "title": "Categories",
+      "description": "Any of these categories. Empty: no category filter.",
+      "multiple": true,
+      "default": []
+    },
+    "tags": {
+      "type": "string",
+      "title": "Tags",
+      "description": "Any of these entries; tags joined by a comma in one entry must all match. Empty: no tag filter.",
+      "multiple": true,
+      "default": []
+    },
+    "agents": {
+      "type": "string",
+      "title": "Agents",
+      "description": "Only these kb agent names, after the scope. Empty: every agent in scope.",
+      "multiple": true,
+      "default": []
+    },
+    "skills": {
+      "type": "boolean",
+      "title": "Give agents kb skills",
+      "description": "Connect each agent to kb's skills of its own library, as tools.",
+      "default": true
+    },
+    "skills_url": {
+      "type": "string",
+      "title": "kb URL for skills",
+      "description": "kb's MCP URL for the agents' skills, usually through the gateway. Empty: the agents get no kb skills.",
+      "default": ""
+    },
+    "skill_uris": {
+      "type": "boolean",
+      "title": "skill:// in Bash",
+      "description": "A Bash command may name a skill's file by its skill:// URI: the mod fetches it into the session's scratchpad and runs that copy.",
+      "default": true
+    },
+    "timeout_ms": {
+      "type": "number",
+      "title": "Timeout (ms)",
+      "description": "How long the session's start waits for kb before going on without its agents.",
+      "default": 5000
+    }
+  }
+}

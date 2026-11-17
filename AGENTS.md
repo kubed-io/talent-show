@@ -1,7 +1,9 @@
 # AGENTS.md
 
-A public plugin marketplace. Claude Code installs from it, and kubed's mcp-kb serves it over MCP
-(`github://kubed-io/skills?ref=<sha>`, one library, scoped by each plugin's `category`).
+A public plugin marketplace, `talent-show`. kubed's mcp-kb serves the skill plugins over MCP, one
+library per plugin (`github://kubed-io/talent-show//plugins/<plugin>?ref=<sha>`). The plugins with
+hooks (`kubed-control`, `kubed-runner`, `kb-agents`) are installed into Claude Code instead, and only
+those: the skill plugins come through kb.
 
 ## Layout
 
@@ -11,6 +13,8 @@ plugins/<plugin>/
   .claude-plugin/plugin.json        name, version, description
   commands/<prompt>.md              prompts: a slash command in Claude Code, an MCP prompt in kb
   agents/<agent>.md                 subagents: <plugin>:<agent> in Claude Code (mcpServers, hooks, permissionMode ignored)
+  hooks/hooks.json                  hooks: shell commands, or a mod's `modules`
+  .mcp.json                         MCP servers, their URLs from env vars
   skills/<skill>/
     SKILL.md                        short: when, how, common mistakes, where to look next
     references/                     loaded on demand; one topic per file
@@ -42,7 +46,8 @@ installed copies.
 
 ## Public repo rules
 
-- No hostnames, realm names or other details from the homelab. Examples use `example.com`.
+- No hostnames, realm names or other details from the homelab. Examples use `example.com`. A plugin
+  that needs an address reads it from an env var (`${VAR}` in `.mcp.json`) or a plugin option.
 - No personal names, emails or handles. The maintainer is Dr K; the owner is `kubed-io`.
 - Paraphrase other projects' docs; don't paste them. jgraph's draw.io repos are Apache-2.0.
 

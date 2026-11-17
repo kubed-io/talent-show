@@ -1,0 +1,15 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "kubed-control",
+  "displayName": "kubed-control",
+  "description": "Shared hooks for kubed's Claude Code sessions: code-server and the runners.",
+  "author": {
+    "name": "kubed-io",
+    "url": "https://github.com/kubed-io"
+  },
+  "repository": "https://github.com/kubed-io/talent-show",
+  "keywords": [
+    "hooks",
+    "telemetry"
+  ]
+}
