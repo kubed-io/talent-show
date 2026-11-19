@@ -6,6 +6,8 @@ import { BASH_HINT } from './skillfiles.ts'
 // kb speaks the stateless 2026-07-28 revision: one POST per request, no initialize.
 export const PROTOCOL = '2026-07-28'
 export const EXTENSION = 'io.modelcontextprotocol/agents'
+// The shape every kubed server shares (frontmatter, skills), and kb's own extras (library, ...).
+export const SHARED_META = 'io.kubed/agent'
 export const META = 'io.kubed.mcp-kb/agent'
 
 export type Options = {
@@ -168,7 +170,9 @@ function names(value: unknown): string[] | undefined {
 // comes from a remote catalogue, so it decides prompt, model and tools, not what runs.
 export function toSpec(card: Card, got: Got, o: Options) {
   const detail = (got._meta?.[META] ?? {}) as Detail
-  const fm = detail.frontmatter ?? {}
+  const shared = (got._meta?.[SHARED_META] ?? {}) as Detail
+  // A kb from before the shared shape keeps the frontmatter under its own key.
+  const fm = shared.frontmatter ?? detail.frontmatter ?? {}
   const role = got.modelRoutingHint?.role
   const spec: Record<string, unknown> = {
     name: agentName(card.name),

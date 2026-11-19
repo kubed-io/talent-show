@@ -76,6 +76,25 @@ test('a kb agent keeps its prompt, model and tools, and loses what would run thi
   ])
 })
 
+test('the frontmatter comes from the shared io.kubed/agent, the library from kb\'s own key', async () => {
+  const spec = toSpec(
+    { name: 'grafana_panels', description: 'Builds panels.' },
+    {
+      agent: 'grafana_panels',
+      instructions: 'You build panels.',
+      _meta: {
+        'io.kubed/agent': { frontmatter: { tools: ['Read'], model: 'opus', maxTurns: 40 }, skills: {} },
+        'io.kubed.mcp-kb/agent': { library: 'grafana', plugin: 'grafana', path: 'agents/panels.md', servers: [] },
+      },
+    },
+    o,
+  )
+  expect(spec.tools).toEqual(['Read'])
+  expect(spec.model).toBe('opus')
+  expect(spec.maxTurns).toBe(40)
+  expect(spec.prompt).toContain('skill://grafana/<skill>/SKILL.md')
+})
+
 test('the routing hint picks a model when the frontmatter names none, and skills can be off', async () => {
   const spec = toSpec(
     { name: 'a_b' },
