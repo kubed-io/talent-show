@@ -1,5 +1,6 @@
 import type { Register } from 'claude-code'
 import {
+  agentName,
   type Card,
   type Got,
   type Options,
@@ -27,9 +28,11 @@ import {
   toolText,
 } from './skillfiles.ts'
 
-// The agent types the last load registered. A type can't be unregistered, so one that has
-// left kb's roster since is hidden from the model instead (agent.offer, below).
+// The agent types in kb's roster at the last load. A type can't be unregistered, so one that
+// has left the roster since is hidden from the model instead (agent.offer, below).
 let loaded = new Set<string>()
+// The registrations under way, one load's after the last's.
+let registering: Promise<unknown> = Promise.resolve()
 let id = 0
 // The next load, before the token it signed in with runs out.
 let refresh: { cancel: () => void } | undefined
@@ -47,21 +50,28 @@ async function rpc($: any, o: Options, method: string, params: Record<string, un
   return parse(method, res.text)
 }
 
-// kb's roster in this scope, then each definition, then one register per agent.
-async function load($: any, o: Options): Promise<string> {
+type Fetched = { c: Card; g?: Got; err: string }
+
+// kb's roster in this scope, then each definition: the part of a load that waits on kb.
+async function fetchRoster($: any, o: Options): Promise<Fetched[]> {
   const listed = await rpc($, o, 'agents/list', {})
   const cards: Card[] = (listed?.agents ?? []).filter(
     (c: Card) => !o.agents.length || o.agents.includes(c.name),
   )
-  const got = await Promise.all(
+  return Promise.all(
     cards.map(c =>
       rpc($, o, 'agents/get', { name: c.name }).then(
         (g: Got) => ({ c, g, err: '' }),
-        (err: Error) => ({ c, g: undefined as Got | undefined, err: err.message }),
+        (err: Error) => ({ c, err: err.message }),
       ),
     ),
   )
-  const now = new Set<string>()
+}
+
+// One register per agent. Claude Code answers a register only once the session binds, which
+// at a busy start comes many seconds after kb answered, so nothing here is timed.
+async function registerAll($: any, o: Options, got: Fetched[]): Promise<string> {
+  const now: string[] = []
   const problems: string[] = []
   for (const { c, g, err } of got) {
     if (!g) {
@@ -70,15 +80,13 @@ async function load($: any, o: Options): Promise<string> {
     }
     try {
       const { agent } = await $.agent.register(toSpec(c, g, o))
-      now.add(agent)
+      now.push(agent)
     } catch (e) {
       problems.push(`${c.name}: ${(e as Error).message}`)
     }
   }
-  loaded = now
   const scope = scopeUrl(o).slice(o.url.length) || 'everything'
-  const names = [...now].join(', ') || 'none'
-  return [`${now.size} agents from kb (${scope}): ${names}`, ...problems].join('\n')
+  return [`${now.length} agents from kb (${scope}): ${now.join(', ') || 'none'}`, ...problems].join('\n')
 }
 
 type SignIn = { headers?: Record<string, string>; expiresIn?: number }
@@ -107,28 +115,43 @@ function scheduleRefresh($: any, o: Options, expiresIn?: number) {
   refresh = undefined
   if (!expiresIn) return
   refresh = $.clock.after(expiresIn * 800, () =>
-    loadInTime($, o).then(
-      text => $.ui.log(`kb-agents: refreshed: ${text}`, { to: 'debug' }),
-      err => $.ui.log(`kb-agents: refresh failed: ${(err as Error).message}`),
-    ),
+    load($, o)
+      .then(({ registered }) => registered)
+      .then(
+        text => $.ui.log(`kb-agents: refreshed: ${text}`, { to: 'debug' }),
+        err => $.ui.log(`kb-agents: refresh failed: ${(err as Error).message}`),
+      ),
   )
 }
 
-async function signInAndLoad($: any, o: Options): Promise<string> {
+async function signInAndFetch($: any, o: Options): Promise<{ auth: SignIn; got: Fetched[] }> {
   const auth = await signIn($)
   headers = auth.headers
-  const text = await load($, { ...o, headers: auth.headers })
-  scheduleRefresh($, o, auth.expiresIn)
-  return auth.headers ? text : `${text} (no runner token)`
+  return { auth, got: await fetchRoster($, { ...o, headers: auth.headers }) }
 }
 
-// Never holds the session's start past timeout_ms: kb being down costs its agents, nothing more.
-async function loadInTime($: any, o: Options): Promise<string> {
+// Waits on kb (its sign-in, agents/list, agents/get) for at most timeout_ms: kb being down
+// costs its agents, nothing more. Then registers them, untimed, and resolves at once with
+// `registered`, what the registering comes to, so the session's start never waits on Claude
+// Code's own binding. (Wrapped: an async function returning a promise would wait on it.)
+async function load($: any, o: Options): Promise<{ registered: Promise<string> }> {
   if (!o.url) throw new Error('no url: set the url option to kb')
-  const late = $.clock.sleep(o.timeoutMs).then(() => {
+  const stop = new AbortController()
+  const late = $.clock.sleep(o.timeoutMs, { signal: stop.signal }).then(() => {
     throw new Error(`kb didn't answer within ${o.timeoutMs} ms`)
   })
-  return Promise.race([signInAndLoad($, o), late])
+  let fetched: { auth: SignIn; got: Fetched[] }
+  try {
+    fetched = await Promise.race([signInAndFetch($, o), late])
+  } finally {
+    stop.abort()
+  }
+  const { auth, got } = fetched
+  loaded = new Set(got.filter(f => f.g).map(f => `kb-agents:${agentName(f.c.name)}`))
+  scheduleRefresh($, o, auth.expiresIn)
+  const registered = registering.then(() => registerAll($, { ...o, headers: auth.headers }, got))
+  registering = registered.catch(() => {})
+  return { registered: registered.then(text => (auth.headers ? text : `${text} (no runner token)`)) }
 }
 
 // A session's scratchpad is /tmp/claude-<uid>/<project>/<session id>/scratchpad, which no API
@@ -215,7 +238,11 @@ export const register: Register = (on, options) => {
       description: "Loads kb's agents again, and lists them",
     })
     try {
-      $.ui.log(`kb-agents: ${await loadInTime($, o)}`, { to: 'debug' })
+      const { registered } = await load($, o)
+      registered.then(
+        text => $.ui.log(`kb-agents: ${text}`, { to: 'debug' }),
+        err => $.ui.log(`kb-agents: no agents registered: ${(err as Error).message}`),
+      )
     } catch (err) {
       $.ui.log(`kb-agents: no agents loaded: ${(err as Error).message}`)
     }
@@ -224,7 +251,7 @@ export const register: Register = (on, options) => {
 
   on('command.run', { command: 'kb-agents' }, async $ => {
     try {
-      return { text: await loadInTime($, o) }
+      return { text: await (await load($, o)).registered }
     } catch (err) {
       return { text: `No agents loaded: ${(err as Error).message}` }
     }
