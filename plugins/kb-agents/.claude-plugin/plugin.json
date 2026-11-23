@@ -2,6 +2,7 @@
   "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "kb-agents",
   "displayName": "kb-agents",
+  "version": "0.2.0",
   "description": "Loads the subagents kb serves (agents/list, agents/get) when a session starts, narrowed by library, category and tag.",
   "author": {
     "name": "kubed-io",
