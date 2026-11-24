@@ -95,7 +95,7 @@ When Dr K speaks on a sub-issue himself, answer him there.
 **On the parent,** you answer and filter your sub-issues' questions. Answer what the
 family's design, its rulings and the code settle, and send the answer back with a `message`.
 A question that needs work is a new sub-issue. Anything else that doesn't block the next
-step is an open question.
+step is an open question. In a repo where `docs/` is the wiki submodule, the family's wiki is the commit `issue-<P>`'s `docs` points at (`git ls-tree origin/issue-<P> docs`); there is no wiki branch named `issue-<P>`.
 
 Return `open_questions` every turn: the whole running list of non-blocking questions and
 problems for Dr K, each a short item that names the sub-issue it came from, if any. Keep it
