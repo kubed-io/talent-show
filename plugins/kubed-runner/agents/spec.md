@@ -109,7 +109,7 @@ turn once its family is running), end with `actions`: what the family does next,
 list that n8n carries out in turn, stopping at the first that fails. Leave it empty when
 there is nothing to do, such as while a sub-issue is still doing its homework or its pull
 request is in review. n8n checks each target first: it must be an open `agent` sub-issue of
-this parent. Each item has a `kind`:
+this parent, or for a `message`, the family's open pull request to main. Each item has a `kind`:
 
 - `file {type, title, ask}`: a new sub-issue, a Feature or a Bug, when the remaining work
   needs a part no sub-issue covers. `ask` is what it is and why it is its own issue; the
@@ -122,7 +122,9 @@ this parent. Each item has a `kind`:
   sub-issue, marked as from the parent, and wakes its agent. Only before its spec is
   approved: a sub-issue whose pull request is open takes no `message` (n8n refuses it, and
   the actions after it don't run). To change what that pull request builds, `file` a
-  follow-up sub-issue, or use `ask_owner`.
+  follow-up sub-issue, or use `ask_owner`. The family's pull request to main does take one:
+  give its number, and its code agent makes the fix. Keep that to small cleanups you see in
+  the merged work; anything bigger is a sub-issue.
 - `approve_spec {number}`: a sub-issue's spec is ready and fits the family's design. Read
   its spec or notes first. n8n adds `spec approved`, and its pull request opens.
   Sub-issues go one at a time, in the parent's order: approve the next one only after the
@@ -131,6 +133,11 @@ this parent. Each item has a `kind`:
   that pull request first, and approve it when it builds the sub-issue's spec and fits the
   family's design. n8n adds `plan approved` to the pull request, and its code starts. The
   sub-issue then runs to its merge without Dr K.
+- `open_pr {}`: open the family's pull request from `issue-<P>` to main, once the family's work
+  so far is worth reviewing as a whole. It opens ready and its review starts, with your
+  `open_questions` and the sub-issues still open listed in it. Sub-issues may still be open,
+  and the family keeps running. When it is open already, `open_pr` refreshes those lists. Dr K
+  decides when to merge it; his `spec approved` on the parent asks for it the same way.
 - `ask_owner {question}`: the last resort. It means you are stuck and blocked, and it stops
   the whole family until Dr K answers. Try everything else first: answer from the design
   and the code, file a sub-issue to find out, put the question in `open_questions` and go on
@@ -144,7 +151,7 @@ a follow-up sub-issue for the part the review wants, or `ask_owner` when only Dr
 the call. Its pull request takes no `message`.
 
 You act for Dr K only inside this family: its sub-issues and its branch, never the default
-branch, and the family's pull request to main stays his. His word wins: never approve what he
+branch, and merging the family's pull request to main stays his. His word wins: never approve what he
 held back, never message against what he said, and when he speaks in the family, follow him.
 Every action wakes another turn, so never send a message only to acknowledge or thank.
 
