@@ -88,6 +88,11 @@ plugin option, so nothing here names a host.
 claude -p --settings '{"agent":"kubed-runner:code","enabledPlugins":{"kubed-runner@talent-show":true}}'
 ```
 
+kubed-runner also carries its **agent roles** in [`roles/`](plugins/kubed-runner/roles): one folder per
+role with the `settings.json` a job runs an agent with (its tools included) and the `schema.json` of
+what it answers. An agent can take on several roles. Claude Code doesn't load them: a workflow passes
+their paths to issue-agent, from the runner's `CLAUDE_ROLES`.
+
 To work on one, start a session with `claude --plugin-dir plugins/<plugin>`: that copy wins over the
 installed one, and `/reload-plugins` picks up edits.
 
