@@ -61,6 +61,9 @@ of its own: a label, a push, a review, red checks.
 - **One issue, in parts.** `make-sub-issue` writes a sub-issue Dr K accepted, as its form asks;
   `sub-issue` starts one; `sub-issue-added` fits in one Dr K added; `sub-issue-closed` realigns
   the family when one closes.
+- **Renovate, followed up.** `renovate-opened` works out what a bump needs beyond the version,
+  makes it and proves the build diff, then approves or asks; `renovate-comment` answers Dr K and
+  changes what he asked; `renovate-updated` redoes the follow-up after Renovate pushes.
 
 [`plugins/ultrapowers`](plugins/ultrapowers/commands)
 
@@ -74,7 +77,7 @@ plugin option, so nothing here names a host.
 | Plugin | What it adds | Needs |
 |---|---|---|
 | [`kubed-control`](plugins/kubed-control) | Each session's title, and the plan's real 5-hour and weekly usage, as OpenTelemetry metrics | `KUBED_OTLP_METRICS_ENDPOINT` |
-| [`kubed-runner`](plugins/kubed-runner) | A runner's entry agents (`spec`, `plan`, `code`, `review`, `debug`, `info`), the MCP servers they may use, and a hook that approves every call their `tools` list allows. Off until a run turns it on | `KUBED_MCP_URL`, `KUBED_MCP_CLIENT`, `MCP_OIDC_ENDPOINT` |
+| [`kubed-runner`](plugins/kubed-runner) | A runner's entry agents (`spec`, `plan`, `code`, `review`, `debug`, `info`, `renovate`), the MCP servers they may use, and a hook that approves every call their `tools` list allows. Off until a run turns it on | `KUBED_MCP_URL`, `KUBED_MCP_CLIENT`, `MCP_OIDC_ENDPOINT` |
 | [`kb-agents`](plugins/kb-agents) | A mod: kb's agents as subagents, picked by library, category and tag | the `url` option |
 
 ```bash

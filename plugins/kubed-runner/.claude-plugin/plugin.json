@@ -2,7 +2,7 @@
   "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "kubed-runner",
   "displayName": "kubed-runner",
-  "description": "The agent flow's entry agents (spec, plan, code, review, debug) and every MCP server they may use. Off by default; a runner turns it on.",
+  "description": "The agent flow's entry agents (spec, plan, code, review, debug, info, renovate) and every MCP server they may use. Off by default; a runner turns it on.",
   "author": {
     "name": "kubed-io",
     "url": "https://github.com/kubed-io"
