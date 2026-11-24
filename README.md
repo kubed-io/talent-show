@@ -59,8 +59,11 @@ of its own: a label, a push, a review, red checks.
   debugging, from the code and the live system, and reports the evidence, the cause and a fix;
   `fix-approved` builds that fix test-first once the report is approved, with no plan.
 - **One issue, in parts.** `make-sub-issue` writes a sub-issue Dr K accepted, as its form asks;
-  `sub-issue` starts one; `sub-issue-added` fits in one Dr K added; `sub-issue-closed` realigns
-  the family when one closes.
+  `sub-issue` starts one; `sub-issue-added` fits in one Dr K added; `sub-issue-closed` reviews
+  what merged and realigns the family when one closes.
+- **A family that runs itself.** `review-sub-issue` reviews a sub-issue's change, and a pass merges
+  it into the family's branch; `sub-issue-reported` reads a sub-issue's report and decides what's
+  next; `parent-message` answers the parent on a sub-issue.
 - **Renovate, followed up.** `renovate-opened` works out what a bump needs beyond the version,
   makes it and proves the build diff, then approves or asks; `renovate-comment` answers Dr K and
   changes what he asked; `renovate-updated` redoes the follow-up after Renovate pushes.

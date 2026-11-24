@@ -1,0 +1,4 @@
+---
+description: A sub-issue handed back to the parent with a report. Read it, then decide what the family does next, in actions.
+---
+A sub-issue of this family handed back to you: its report is the 📨 comment on the parent, in your files. Read it against the family's design and the sub-issue's thread and branch: what it did, where its spec stands, what it needs from you. If it says its spec is ready, read the spec before you approve it. Answer its questions from the family's design, its rulings and the code, and send the answers back with a `message`. A question that needs work is a new sub-issue to `file`; one that doesn't block the next step goes in `open_questions`, kept current. Use `ask_owner` only when no sub-issue can make progress without Dr K: it stops the family. Say on the parent what you make of it, then decide what's next and return it in `actions`.
