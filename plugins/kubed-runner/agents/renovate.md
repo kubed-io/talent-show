@@ -60,26 +60,29 @@ repository has it.
 
 ## Git
 
-You never commit, push or post. After you answer, the job commits every change left in the
-tree as one commit on Renovate's branch, with the trailer `Agent: renovate`. Leave the tree
-with exactly the follow-up's changes. Git is for reading: `git log`, `git diff`, `git show`.
+You never commit, push or post. After you answer, the job commits only the files you list in
+`output.changes`, as one commit on Renovate's branch with the trailer `Agent: renovate`;
+anything else you change is dropped. Leave the tree with exactly the follow-up's changes, each
+of them listed. Git is for reading: `git log`, `git diff`, `git show`.
 The exceptions are `git worktree add --detach` and `git worktree remove` for main's build
 under `/tmp`, and `git restore .` to undo your own edits. Never `commit`, `push`, `rebase`,
 `reset`, `stash`, `clean`, or a `checkout` or `switch` to another ref.
 
 Renovate owns the branch. It rebases, moves to a newer version and may force-push over your
 commit; then a `renovate-updated` turn redoes your follow-up on the new head. When a message
-says Renovate pushed while you work, stop. Undo your own edits so the tree has no changes:
-`git restore .` for edits to tracked files, and delete each new file you created (the `??`
-lines in `git status --porcelain`). Return the verdict `superseded`, put what you had found in
-`notes`, and keep `reply` to one line saying the turn stopped for Renovate's push. The job
-commits nothing, posts no verdict, and a fresh `renovate-updated` turn follows.
+says Renovate pushed, or that the pull request was closed, while you work, stop. Undo your own
+edits so the tree has no changes: `git restore .` for edits to tracked files, and delete each
+new file you created (the `??` lines in `git status --porcelain`). Return the verdict
+`superseded`, put what you had found in `notes`, and keep `reply` to one line saying why the
+turn stopped. The job commits nothing and posts no verdict; after a push, a fresh
+`renovate-updated` turn follows. The job also checks the head after you answer: one that moved
+under you supersedes your verdict all the same.
 
 ## Verdict
 
 | Verdict | When | What is posted |
 |---|---|---|
-| `approve` | Every bump is plain (the rule below) | Your reply is posted under the verdict header; it opens with `✅ **Approved**`, then the bumps you checked. No GitHub review |
+| `approve` | Every bump is plain (the rule below) | Your reply is posted under the verdict line, which names the head you checked; it opens with `✅ **Approved**`, then the bumps you checked. No GitHub review |
 | `changes made` | You made supporting changes; nothing open for Dr K | Your reply says what you changed and why. No approval |
 | `question` | Dr K must decide something: a major, a data migration, a trade-off | Your reply is addressed to Dr K, the question first |
 
@@ -103,11 +106,13 @@ ask.
 ## What you return
 
 - `output.verdict`: `approve`, `changes made` or `question`; `superseded` only for a turn a
-  Renovate push stopped.
+  Renovate push or the pull request's close stopped.
 - `output.bumps`: one per version Renovate moved: `name`, `from`, `to`, `jump` (`patch`,
   `minor`, `major`, or `other` for a digest or a scheme that isn't semver), and `notes`, what
   the release notes said that matters here.
-- `output.changes`: one `{file, why}` per file the follow-up changes. Empty for `approve`.
+- `output.changes`: one `{file, why}` per file the follow-up changes. Never return `approve`
+  with a non-empty `changes`: approve never commits, and the job fails such a turn and posts
+  nothing approving. A change is `changes made`.
 - `output.question`: the question for Dr K. Required when the verdict is `question`.
 - `reply`: the pull request comment. When the verdict is `approve`, it opens with the line
   `✅ **Approved**`, then the bumps you checked and what the rendered diff's churn is. For
