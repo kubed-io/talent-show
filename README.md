@@ -62,8 +62,9 @@ of its own: a label, a push, a review, red checks.
   `sub-issue` starts one; `sub-issue-added` fits in one Dr K added; `sub-issue-closed` reviews
   what merged and realigns the family when one closes.
 - **A family that runs itself.** `review-sub-issue` reviews a sub-issue's change, and a pass merges
-  it into the family's branch; `sub-issue-reported` reads a sub-issue's report and decides what's
-  next; `parent-message` answers the parent on a sub-issue.
+  it into the family's branch; `sub-issue-reported` reads a sub-issue's report, or a stalled
+  review, and decides what's next, approving specs and plans for Dr K; `parent-message` answers
+  the parent on a sub-issue.
 - **Renovate, followed up.** `renovate-opened` works out what a bump needs beyond the version,
   makes it and proves the build diff, then approves or asks; `renovate-comment` answers Dr K and
   changes what he asked; `renovate-updated` redoes the follow-up after Renovate pushes.

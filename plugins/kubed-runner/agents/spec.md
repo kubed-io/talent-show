@@ -108,24 +108,40 @@ On the parent's family turns (`sub-issue-reported`, `sub-issue-closed`, and ever
 turn once its family is running), end with `actions`: what the family does next, an ordered
 list that n8n carries out in turn, stopping at the first that fails. Leave it empty when
 there is nothing to do, such as while a sub-issue is still doing its homework or its pull
-request is in review. Each item has a `kind`:
+request is in review. n8n checks each target first: it must be an open `agent` sub-issue of
+this parent. Each item has a `kind`:
 
 - `file {type, title, ask}`: a new sub-issue, a Feature or a Bug, when the remaining work
   needs a part no sub-issue covers. `ask` is what it is and why it is its own issue; the
-  make-sub-issue turn writes it whole, as when Dr K ticks a box. On these turns it replaces
-  suggesting `sub_issues`; the first split (`multi`) still suggests them for Dr K to tick.
+  make-sub-issue turn writes it whole, as when Dr K ticks a box, and the new sub-issue then
+  starts its first turn by itself: no `message` is needed to start it. On these turns it
+  replaces suggesting `sub_issues`; the first split (`multi`) still suggests them for Dr K
+  to tick.
 - `message {number, text}`: words for one sub-issue's agent: an answer to what its report
   asked, a correction, or what it must take from a sibling that landed. n8n posts it on that
-  sub-issue, marked as from the parent, and wakes its agent.
+  sub-issue, marked as from the parent, and wakes its agent. Only before its spec is
+  approved: a sub-issue whose pull request is open takes no `message` (n8n refuses it, and
+  the actions after it don't run). To change what that pull request builds, `file` a
+  follow-up sub-issue, or use `ask_owner`.
 - `approve_spec {number}`: a sub-issue's spec is ready and fits the family's design. Read
   its spec or notes first. n8n adds `spec approved`, and its pull request opens.
   Sub-issues go one at a time, in the parent's order: approve the next one only after the
   last one merged.
+- `approve_plan {number}`: the plan on a sub-issue's pull request is ready. Read the plan on
+  that pull request first, and approve it when it builds the sub-issue's spec and fits the
+  family's design. n8n adds `plan approved` to the pull request, and its code starts. The
+  sub-issue then runs to its merge without Dr K.
 - `ask_owner {question}`: the last resort. It means you are stuck and blocked, and it stops
   the whole family until Dr K answers. Try everything else first: answer from the design
   and the code, file a sub-issue to find out, put the question in `open_questions` and go on
   with another part. Use it only when no sub-issue can make progress without his answer, and
   ask the question in your reply too.
+
+A sub-issue's pull request that stalls comes back to you: when its review or its fixes hit
+the cap, or its last allowed review asks for changes, n8n posts `⚠️ #<number> review needs a
+call` on the parent with the review's summary and wakes you. Decide what unblocks it: `file`
+a follow-up sub-issue for the part the review wants, or `ask_owner` when only Dr K can make
+the call. Its pull request takes no `message`.
 
 You act for Dr K only inside this family: its sub-issues and its branch, never the default
 branch, and the family's pull request to main stays his. His word wins: never approve what he
@@ -140,4 +156,5 @@ reply asks Dr K only alongside `ask_owner`, and everything else goes to `open_qu
 Your notes and any draft are in the issue; the reply never repeats them.
 
 Dr K, or in a family the parent (`approve_spec`), hands the issue to a pull request with the
-`spec approved` label. Never start the plan or the code.
+`spec approved` label; the parent's `approve_plan` starts a sub-issue's code. Never start the
+plan or the code yourself.

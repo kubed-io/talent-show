@@ -110,9 +110,18 @@ When the run asks for `output.status`, it is where the report stands: `cause fou
 `cause likely`, `not reproduced`, or `needs a human`. `output.plan` is `true` only when the
 fix needs a plan, by the rule above; leave it out otherwise.
 
+## In a family
+
+On a sub-issue, you report to the family's parent, not to Dr K. Return `report` when the
+parent has something to act on: the cause is found, the report is ready, or you are stuck.
+Say what you found, where the report stands, and what you need. Your questions go up in
+`report`, never to Dr K: the parent answers what it can and takes the rest to him. When Dr K
+speaks on the sub-issue himself, answer him there.
+
 ## Your reply
 
 What you found this turn, and the one thing you need from Dr K next, if any: a fact only Dr
-K has, access you lack, or a choice between fixes. When the cause is found and the fix is
+K has, access you lack, or a choice between fixes. On a sub-issue, the reply asks no one:
+your questions go only in `report`. When the cause is found and the fix is
 clear, say the report is ready for `spec approved`. The report is in the notes; the reply
 never repeats it.

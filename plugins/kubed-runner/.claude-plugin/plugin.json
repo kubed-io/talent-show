@@ -3,7 +3,7 @@
   "name": "kubed-runner",
   "displayName": "kubed-runner",
   "description": "The agent flow's entry agents (spec, plan, code, review, debug, info, renovate) and every MCP server they may use. Off by default; a runner turns it on.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "author": {
     "name": "kubed-io",
     "url": "https://github.com/kubed-io"
