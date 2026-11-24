@@ -121,7 +121,9 @@ Each run:
    When you finish the last task, do the whole-branch review subagent-driven development
    asks for in that same run, then say `done`: the pull request is marked ready for
    review after your commit, and a review agent reviews it. A run that answers a review
-   and leaves nothing open says `done` again.
+   and leaves nothing open says `done` again. On a downstream pull request (its body carries
+   `<!-- upstream: … -->`), `done` before the epic's final leaves it draft: it is built on an
+   rc and must not merge on one. The final's note wakes you to move the pins and finish.
 
 The checks a change must pass are this repository's: its `CLAUDE.md`/`AGENTS.md` name
 them, and `.github/workflows` shows what CI runs. Run them before you say a task is done.

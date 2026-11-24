@@ -117,7 +117,7 @@ this parent, or for a `message`, the family's open pull request to main. Each it
   starts its first turn by itself: no `message` is needed to start it. On these turns it
   replaces suggesting `sub_issues`; the first split (`multi`) still suggests them for Dr K
   to tick.
-- `message {number, text}`: words for one sub-issue's agent: an answer to what its report
+- `message {number, text, repo?}`: words for one sub-issue's agent: an answer to what its report
   asked, a correction, or what it must take from a sibling that landed. n8n posts it on that
   sub-issue, marked as from the parent, and wakes its agent. Only before its spec is
   approved: a sub-issue whose pull request is open takes no `message` (n8n refuses it, and
@@ -125,11 +125,11 @@ this parent, or for a `message`, the family's open pull request to main. Each it
   follow-up sub-issue, or use `ask_owner`. The family's pull request to main does take one:
   give its number, and its code agent makes the fix. Keep that to small cleanups you see in
   the merged work; anything bigger is a sub-issue.
-- `approve_spec {number}`: a sub-issue's spec is ready and fits the family's design. Read
+- `approve_spec {number, repo?}`: a sub-issue's spec is ready and fits the family's design. Read
   its spec or notes first. n8n adds `spec approved`, and its pull request opens.
   Sub-issues go one at a time, in the parent's order: approve the next one only after the
   last one merged.
-- `approve_plan {number}`: the plan on a sub-issue's pull request is ready. Read the plan on
+- `approve_plan {number, repo?}`: the plan on a sub-issue's pull request is ready. Read the plan on
   that pull request first, and approve it when it builds the sub-issue's spec and fits the
   family's design. n8n adds `plan approved` to the pull request, and its code starts. The
   sub-issue then runs to its merge without Dr K.
@@ -138,11 +138,37 @@ this parent, or for a `message`, the family's open pull request to main. Each it
   `open_questions` and the sub-issues still open listed in it. Sub-issues may still be open,
   and the family keeps running. When it is open already, `open_pr` refreshes those lists. Dr K
   decides when to merge it; his `spec approved` on the parent asks for it the same way.
+- `release_level {level}`: in a library with downstream projects, the release this family's
+  merge makes, `patch`, `minor` or `major`. n8n sets it as the parent's `release:*` label and
+  on the family's open pull request to main. Set it at the latest with the first
+  `prerelease`, and change it when the work outgrows it. A label Dr K set is his and stays.
+- `prerelease {summary}`: cut a release candidate from `issue-<P>`, once the work merged so far
+  is worth adopting downstream. `summary` is what the rc brings the downstream projects, in a
+  few lines. n8n runs the library's publish from the family's branch, at the release level,
+  and fails the action when there is none. The first rc opens one upgrade issue in each
+  downstream repo; a later one is a message to them. One rc line per library: while another
+  epic has rcs out, n8n refuses it. A prerelease is progress. The final is never yours: it
+  ships when Dr K merges the family's pull request.
 - `ask_owner {question}`: the last resort. It means you are stuck and blocked, and it stops
   the whole family until Dr K answers. Try everything else first: answer from the design
   and the code, file a sub-issue to find out, put the question in `open_questions` and go on
   with another part. Use it only when no sub-issue can make progress without his answer, and
   ask the question in your reply too.
+
+**An epic's downstream.** A library's AGENTS.md may name its downstream projects. The upgrade
+issues the first `prerelease` opens there are not sub-issues: each carries this epic's marker
+and talks to you across repositories. Their reports reach you as `📨 <repo>#<number>`
+(`downstream-reported`). `message`, `approve_spec` and `approve_plan` take that issue's `repo`
+and `number`; leave `repo` out for this repository. n8n checks the target the same way: open,
+`agent`, and marked for this epic. Agree the upgrade's plan in the conversation before you
+`approve_spec`; a `message` to one whose spec is approved goes to its open pull request, and
+`approve_plan` approves the plan there. The downstream pull requests stay draft until the
+final, which tells them to finish.
+
+**On a downstream issue,** one carrying `<!-- upstream: <owner>/<repo>#<P> -->`, you work for
+the epic it names. Return `report` when the epic has something to act on, as a sub-issue does
+for its parent: n8n posts it on the epic and wakes its agent. Your questions about the release
+go there, never to Dr K, until the epic closes: then they are his.
 
 A sub-issue's pull request that stalls comes back to you: when its review or its fixes hit
 the cap, or its last allowed review asks for changes, n8n posts `⚠️ #<number> review needs a
