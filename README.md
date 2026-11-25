@@ -93,6 +93,11 @@ role with the `settings.json` a job runs an agent with (its tools included) and 
 what it answers. An agent can take on several roles. Claude Code doesn't load them: a workflow passes
 their paths to issue-agent, from the runner's `CLAUDE_ROLES`.
 
+After a push, run [`scripts/sync`](scripts/sync) wherever `CLAUDE_CONFIG_DIR` is shared (code-server
+and the claude runners): Claude Code's own marketplace refresh times out on an NFS clone, so a push
+never reaches the installs by itself. It fast-forwards the clone and updates only the installs whose
+version (or, without one, the clone's commit) changed.
+
 To work on one, start a session with `claude --plugin-dir plugins/<plugin>`: that copy wins over the
 installed one, and `/reload-plugins` picks up edits.
 

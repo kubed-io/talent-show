@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Brings the installed talent-show plugins up to talent-show's main. Run it after a push.
+#
+# Claude Code's own marketplace refresh times out on an NFS clone (its checkout outlasts the refresh
+# limit), so a push never reaches the installs by itself, and every Claude process sharing
+# CLAUDE_CONFIG_DIR, the claude runners included, keeps loading the old version. This
+# fast-forwards the marketplace clone, then updates each install whose version differs from the
+# plugin's: its `version`, or for a plugin without one, the clone's commit. An install already
+# there is skipped, so running it twice costs nothing.
+set -euo pipefail
+
+cfg=${CLAUDE_CONFIG_DIR:-$HOME/.claude}
+mkt=$cfg/plugins/marketplaces/talent-show
+git=(git -C "$mkt" -c "safe.directory=$mkt")
+
+"${git[@]}" fetch -q origin
+"${git[@]}" merge -q --ff-only origin/main
+head=$("${git[@]}" rev-parse --short=12 HEAD)
+echo "talent-show marketplace at ${head}"
+
+jq -r '.plugins | to_entries[] | select(.key | endswith("@talent-show"))
+       | .key as $k | .value[] | [$k, .scope, .version, (.projectPath // "")] | @tsv' \
+  "$cfg/plugins/installed_plugins.json" |
+while IFS=$'\t' read -r key scope have project; do
+  name=${key%@talent-show}
+  manifest=$mkt/plugins/$name/.claude-plugin/plugin.json
+  if [[ ! -f "$manifest" ]]; then
+    echo "$key ($scope): no longer in the marketplace, left alone"
+    continue
+  fi
+  want=$(jq -r '.version // empty' "$manifest")
+  want=${want:-$head}
+  if [[ "$have" == "$want" ]]; then
+    echo "$key ($scope): $have, up to date"
+    continue
+  fi
+  echo "$key ($scope): $have -> $want"
+  # a local install updates from its project; stdin stays the loop's
+  (cd "${project:-$HOME}" && claude plugin update "$key" --scope "$scope" </dev/null)
+done
