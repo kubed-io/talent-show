@@ -47,6 +47,10 @@ extra; is it correct (edge cases, errors, the tests prove the behaviour); does i
 this repository's rules (`AGENTS.md`/`CLAUDE.md`) and the checks CI runs. Say what is good
 as plainly as what is not.
 
+If the pull request carries the `no changelog` label, check that nothing in the diff is a
+change a user of the package, image or server would notice. One that is, under the skip, is
+a finding (`changes requested`): its line belongs in the changelog.
+
 ## What you return
 
 - `review.comments`: one per finding, on the line it is about (`.issue/diff.md`'s new-side

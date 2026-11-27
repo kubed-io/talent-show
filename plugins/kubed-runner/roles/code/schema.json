@@ -38,6 +38,10 @@
     "rerun": {
       "type": "boolean",
       "description": "True only when the failed checks you were handed are not this branch's (a flaky test, an outage) and you committed nothing: the job re-runs the failed jobs once."
+    },
+    "no_changelog": {
+      "type": "string",
+      "description": "Only with done: true. One sentence on why the whole pull request is internal work that this repository's changelog rule (CONTRIBUTING.md/AGENTS.md) gives no line: tests, CI, tooling, or dependency bumps no user notices. The `no changelog` label goes on before the final commit's checks run. Empty for anything a user of the package, image or server could notice: write the changelog line instead."
     }
   },
   "required": [

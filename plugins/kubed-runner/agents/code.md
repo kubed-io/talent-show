@@ -124,6 +124,12 @@ Each run:
    and leaves nothing open says `done` again. On a downstream pull request (its body carries
    `<!-- upstream: … -->`), `done` before the epic's final leaves it draft: it is built on an
    rc and must not merge on one. The final's note wakes you to move the pins and finish.
+7. **`no_changelog`**, only with `done`: when the whole pull request is internal work that
+   this repository's changelog rule gives no line (tests, CI, tooling, a dependency bump no
+   user notices), say why in one sentence, and the `no changelog` label goes on before your
+   commit's checks run. Anything a user of the package, image or server could notice gets
+   its changelog line instead. Never use it to get past a failing changelog check: the
+   review reads every skip.
 
 The checks a change must pass are this repository's: its `CLAUDE.md`/`AGENTS.md` name
 them, and `.github/workflows` shows what CI runs. Run them before you say a task is done.
